@@ -369,6 +369,43 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, array &$form_state) {
+    // if From-Origin is enabled, it should be explicitly set
+    $from_origin_enable = $form_state['values']['seckit_various']['from_origin'];
+    $from_origin_destination = $form_state['values']['seckit_various']['from_origin_destination'];
+    if (($from_origin_enable == 1) && (!$from_origin_destination)) {
+      form_error($form['seckit_various']['from_origin_destination'], $form_state, t('You have to set up trustworthy destination for From-Origin HTTP response header. Default is same.'));
+    }
+    // if X-Frame-Options is set to Allow-From, it should be explicitly set
+    $x_frame_value = $form_state['values']['seckit_clickjacking']['x_frame'];
+    if ($x_frame_value == SECKIT_X_FRAME_ALLOW_FROM) {
+      $x_frame_allow_from = $form_state['values']['seckit_clickjacking']['x_frame_allow_from'];
+      if (!_seckit_explode_value($x_frame_allow_from)) {
+        form_error($form['seckit_clickjacking']['x_frame_allow_from'], $form_state, t('You must specify a trusted Origin for the Allow-From value of the X-Frame-Options HTTP response header.'));
+      }
+    }
+    // if HTTP Strict Transport Security is enabled, max-age must be specified.
+    // HSTS max-age should only contain digits.
+    $hsts_enable = $form_state['values']['seckit_ssl']['hsts'];
+    $hsts_max_age = $form_state['values']['seckit_ssl']['hsts_max_age'];
+    if (($hsts_enable == 1) && (!$hsts_max_age)) {
+      form_error($form['seckit_ssl']['hsts_max_age'], $form_state, t('You have to set up Max-Age value for HTTP Strict Transport Security. Default is 1000.'));
+    }
+    if (preg_match('/[^0-9]/', $hsts_max_age)) {
+      form_error($form['seckit_ssl']['hsts_max_age'], $form_state, t('Only digits are allowed in HTTP Strict Transport Security Max-Age field.'));
+    }
+    // if JS + CSS + Noscript Clickjacking protection is enabled,
+    // custom text for disabled JS must be specified
+    $js_css_noscript_enable = $form_state['values']['seckit_clickjacking']['js_css_noscript'];
+    $noscript_message = $form_state['values']['seckit_clickjacking']['noscript_message'];
+    if (($js_css_noscript_enable == 1) && (!$noscript_message)) {
+      form_error($form['seckit_clickjacking']['noscript_message'], $form_state, t('You have to set up Custom text for disabled JavaScript message when JS + CSS + Noscript protection is enabled.'));
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, array &$form_state) {
     $list = [];
     $this->buildAttributeList($list, $form_state['values']);
@@ -379,6 +416,19 @@ class SettingsForm extends ConfigFormBase {
     }
 
     $config->save();
+
+    $from_origin_enable = $form_state['values']['seckit_various']['from_origin'];
+    $x_content_type_options_enable = $form_state['values']['seckit_xss']['x_content_type']['checkbox'];
+    $file_system = file_default_scheme();
+    if ($from_origin_enable && ($file_system == 'public')) {
+      $msg = 'From-Origin HTTP response header will not be served for files because of public file system. It is recommended to enable private file system to ensure provided by From-Origin security.';
+      drupal_set_message($msg, 'warning');
+    }
+    if ($x_content_type_options_enable && ($file_system == 'public')) {
+      $msg = 'X-Content-Type-Options HTTP response header will not be served for files because of public file system. It is recommended to enable private file system to ensure provided by X-Content-Type-Options security.';
+      drupal_set_message($msg, 'warning');
+    }
+
     return parent::submitForm($form, $form_state);
   }
 

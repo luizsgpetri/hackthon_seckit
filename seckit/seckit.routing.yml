@@ -5,3 +5,10 @@ seckit.settings:
     _form: '\Drupal\seckit\Form\SettingsForm'
   requirements:
     _permission: 'administer seckit'
+seckit.report:
+  path: '/admin/config/system/seckit/csp-report'
+  defaults:
+    _title: ''
+    _content: '\Drupal\seckit\Controller\SeckitExportController::export'
+  requirements:
+    _access: 'TRUE'

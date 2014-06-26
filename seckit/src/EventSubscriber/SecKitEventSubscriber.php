@@ -301,7 +301,6 @@ class SecKitEventSubscriber implements EventSubscriberInterface {
 EOT;
   }
 
-
   /**
    * Sends Strict-Transport-Security HTTP header
    *
