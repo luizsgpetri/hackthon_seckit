@@ -1,0 +1,42 @@
+seckit_xss:
+  csp:
+    checkbox: 0
+    report-only: 0
+    default-src: ''
+    script-src: ''
+    object-src: ''
+    img-src: ''
+    media-src: ''
+    frame-src: ''
+    font-src: ''
+    connect-src: ''
+    report-uri: ''
+    policy-uri: ''
+  x_xss:
+    seckit_x_xss_option_disable: 'Disabled'
+    seckit_x_xss_option_0: '0'
+    seckit_x_xss_option_1: '1; mode=block'
+    select: 0
+seckit_csrf:
+  origin: 1
+  origin_whitelist: ''
+seckit_clickjacking:
+  js_css_noscript: 0
+  noscript_message: ''
+  x_frame:
+    SECKIT_X_FRAME_DISABLE: 'Disabled'
+    SECKIT_X_FRAME_SAMEORIGIN: 'SameOrigin'
+    SECKIT_X_FRAME_DENY: 'Deny'
+    SECKIT_X_FRAME_ALLOW_FROM: 'Allow-From'
+  x_frame_allow_from: ''
+seckit_ssl:
+  hsts: 0
+  hsts_subdomains: 0
+  hsts_max_age: ''
+seckit_various:
+  from_origin: 0
+  from_origin_destination: ''
+
+
+
+

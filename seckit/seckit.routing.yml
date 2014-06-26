@@ -1,0 +1,7 @@
+seckit.settings:
+  path: '/admin/config/system/seckit'
+  defaults:
+    _title: 'Security Kit'
+    _form: '\Drupal\seckit\Form\SettingsForm'
+  requirements:
+    _permission: 'administer seckit'

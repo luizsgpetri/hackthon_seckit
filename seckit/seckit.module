@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Allows administrators to improve security of the website.
+ */
+
+/**
+ * Necessary constants.
+ */
+define('SECKIT_X_XSS_DISABLE', 0); // disable X-XSS-Protection HTTP header
+define('SECKIT_X_XSS_0', 1); // set X-XSS-Protection HTTP header to 0
+define('SECKIT_X_XSS_1', 2); // set X-XSS-Protection HTTP header to 1; mode=block
+define('SECKIT_X_FRAME_DISABLE', 0); // disable X-Frame-Options HTTP header
+define('SECKIT_X_FRAME_SAMEORIGIN', 1); // set X-Frame-Options HTTP header to SameOrigin
+define('SECKIT_X_FRAME_DENY', 2); // set X-Frame-Options HTTP header to Deny
+define('SECKIT_X_FRAME_ALLOW_FROM', 3); // set X-Frame-Options HTTP header to Allow-From
+
+/**
+ * Implements hook_permission().
+ */
+function seckit_permission() {
+  return array(
+    'administer seckit' => array(
+      'title' => t('Administer SecKit'),
+      'description' => t('Configure security features of your Drupal installation.'),
+    ),
+  );
+}
