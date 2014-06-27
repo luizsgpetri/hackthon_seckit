@@ -380,7 +380,7 @@ class SettingsForm extends ConfigFormBase {
     $x_frame_value = $form_state['values']['seckit_clickjacking']['x_frame'];
     if ($x_frame_value == SECKIT_X_FRAME_ALLOW_FROM) {
       $x_frame_allow_from = $form_state['values']['seckit_clickjacking']['x_frame_allow_from'];
-      if (!_seckit_explode_value($x_frame_allow_from)) {
+      if (!$this->_seckit_explode_value($x_frame_allow_from)) {
         form_error($form['seckit_clickjacking']['x_frame_allow_from'], $form_state, t('You must specify a trusted Origin for the Allow-From value of the X-Frame-Options HTTP response header.'));
       }
     }
@@ -462,6 +462,15 @@ class SettingsForm extends ConfigFormBase {
          $list[$name] = $rawAttribute;
       }
     }
+  }
+
+  /**
+   * Converts a multi-line configuration option to an array.
+   * Sanitises by trimming whitespace, and filtering empty options.
+   */
+  protected function _seckit_explode_value($string) {
+    $values = explode("\n", $string);
+    return array_values(array_filter(array_map('trim', $values)));
   }
 
 }

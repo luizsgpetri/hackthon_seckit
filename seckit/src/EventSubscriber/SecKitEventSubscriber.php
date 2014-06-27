@@ -271,7 +271,7 @@ class SecKitEventSubscriber implements EventSubscriberInterface {
    * We need it, because Drupal API doesn't allow to init HTML elements in desired sequence.
    */
   public function _seckit_js_css_noscript() {
-    drupal_add_js(_seckit_get_js_css_noscript_code(), array('type' => 'inline'));
+    _drupal_add_js($this->_seckit_get_js_css_noscript_code(), array('type' => 'inline'));
   }
 
   /**
@@ -279,8 +279,13 @@ class SecKitEventSubscriber implements EventSubscriberInterface {
    *
    * @return string
    */
-  public function _seckit_get_js_css_noscript_code() {
-    $message = Xss::filter($this->get('seckit_clickjacking.noscript_message'));
+  public function _seckit_get_js_css_noscript_code($noscript_message = NULL) {
+    // Allows noscript automated testing.
+    $noscript_message = $noscript_message ?
+      $noscript_message :
+      $this->config->get('seckit_clickjacking.noscript_message');
+
+    $message = Xss::filter($noscript_message);
     $path = base_path() . drupal_get_path('module', 'seckit');
     return <<< EOT
         // close script tag for SecKit protection
@@ -333,14 +338,5 @@ EOT;
   public function _seckit_from_origin() {
     $value = $this->config->get('seckit_various.from_origin_destination');
     drupal_add_http_header('From-Origin', $value);
-  }
-
-  /**
-   * Converts a multi-line configuration option to an array.
-   * Sanitises by trimming whitespace, and filtering empty options.
-   */
-  protected function _seckit_explode_value($string) {
-    $values = explode("\n", $string);
-    return array_values(array_filter(array_map('trim', $values)));
   }
 }

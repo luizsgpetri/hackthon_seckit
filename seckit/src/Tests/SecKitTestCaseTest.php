@@ -5,6 +5,7 @@
  */
 namespace Drupal\seckit\Tests;
 use Drupal\simpletest\WebTestBase;
+use Drupal\seckit\EventSubscriber\SecKitEventSubscriber;
 /**
  * Functional tests for Security Kit.
  */
@@ -287,16 +288,17 @@ class SecKitTestCaseTest extends WebTestBase {
   /**
    * Tests JS + CSS + Noscript protection.
    */
-  /*
   public function testJSCSSNoscript() {
     $form['seckit_clickjacking[js_css_noscript]'] = TRUE;
     $form['seckit_clickjacking[noscript_message]'] = 'Sorry, your JavaScript is disabled.';
     $this->drupalPostForm('admin/config/system/seckit', $form, t('Save configuration'));
-    $code = _seckit_get_js_css_noscript_code();
+    $config = \Drupal::config('seckit.settings');
+    $no_script_message = $config->get('seckit_clickjacking.noscript_message');
+    $code = SecKitEventSubscriber::_seckit_get_js_css_noscript_code($no_script_message);
     $this->assertRaw($code,
       t('JavaScript + CSS + Noscript protection is loaded.'));
   }
-*/
+
   /**
    * Tests disabled HTTP Strict Transport Security.
    */
